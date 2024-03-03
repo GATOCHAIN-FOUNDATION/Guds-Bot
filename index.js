@@ -12,6 +12,18 @@ const SwapContractAbi = require("./constant/constant").ContractABI;
 
 // console.log(SwapContractAbi, SwapContractAddress);
 
+// Redirect console output to a variable
+let consoleOutput = "";
+
+// Override default console.log function to capture logs
+const originalLog = console.log;
+console.log = function (...args) {
+  // Convert arguments to string and append to consoleOutput
+  consoleOutput += args.map((arg) => arg.toString()).join(" ") + "\n";
+  // Call original log function
+  originalLog.apply(console, args);
+};
+
 // Connect to the contract
 const contract = new ethers.Contract(
   SwapContractAddress,
@@ -117,7 +129,7 @@ setInterval(checkReservesAndSwap, 10000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
-  res.send("Reserve check initiated.");
+  res.send(`<pre>${consoleOutput}</pre>`);
 });
 
 const PORT = process.env.PORT || 5000;
