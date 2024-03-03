@@ -49,6 +49,7 @@ async function checkReservesAndSwap() {
     second: "2-digit",
   });
   console.log(`Reserve check initiated at ${currentDateTime}`);
+
   const [reserveToken1, reserveToken2] = await connectedContract.getReserves();
 
   const bigNumber1 = ethers.BigNumber.from(reserveToken1);
@@ -59,7 +60,7 @@ async function checkReservesAndSwap() {
   const regularNumber2 = bigNumber2.toString();
   const etherValue1 = ethers.utils.formatUnits(regularNumber1, 18);
   const etherValue2 = ethers.utils.formatUnits(regularNumber2, 18);
-  console.log("Token A :", etherValue1, "Token B :", etherValue2);
+  console.log("USDT :", etherValue1, "GUDS :", etherValue2);
   const gasPrice = await provider.getGasPrice();
   const gasPriceWithBuffer = gasPrice.mul(2);
   const PriceofUSDT = etherValue1 / etherValue2;
