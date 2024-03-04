@@ -49,6 +49,7 @@ async function checkReservesAndSwap() {
     minute: "2-digit",
     second: "2-digit",
   });
+  console.log(`----------------------------------------------`);
   console.log(`Reserve check initiated at ${currentDateTime}`);
 
   const [reserveToken1, reserveToken2] = await connectedContract.getReserves();
