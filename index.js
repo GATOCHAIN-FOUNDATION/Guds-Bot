@@ -136,22 +136,25 @@ app.get("/", async (req, res) => {
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-color: rgba(0,0,0,0);
+        background-color: black;
         display:flex;
         align-items:center;
         justify-content:center;
         flex-direction:column;
         color:#fff;
+        height:100%;
+        width:100%;
+        overflow: hidden;
       }
       pre {
       
         padding: 10px;
         border-radius: 5px;
         overflow: auto;
-        border: 1px solid black;
+        border: 1px solid rgba(255, 255, 255, 1);
         height:500px;
         width:500px;
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(255, 255, 255, 0.1);
         color:#fff;
       }
       h1{
@@ -159,7 +162,7 @@ app.get("/", async (req, res) => {
       }
     </style>
 
-    <h1>Recent Logs</h1>
+   
     <pre>${consoleOutput}</pre>
   `;
   res.send(htmlResponse);
