@@ -19,9 +19,9 @@ let consoleOutput = "";
 const originalLog = console.log;
 console.log = function (...args) {
   // Convert arguments to string and append to consoleOutput
-  consoleOutput += args.map((arg) => arg.toString()).join(" ") + "\n";
+  consoleOutput += args.map((arg) => arg.toString()).join(" ") + "\n\n";
   // Call original log function
-  consoleOutput = consoleOutput.split("\n").slice(-20).join("\n");
+  consoleOutput = consoleOutput.split("\n").slice(-60).join("\n");
   originalLog.apply(console, args);
 };
 
