@@ -147,6 +147,8 @@ app.get("/", async (req, res) => {
         border-radius: 5px;
         overflow: auto;
         border: 1px solid black;
+        height:500px;
+        width:400px;
       }
       h1{
 
