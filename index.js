@@ -127,11 +127,36 @@ async function checkReservesAndSwap() {
   }
 }
 
-setInterval(checkReservesAndSwap, 100000);
+setInterval(checkReservesAndSwap, 10000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
-  res.send(`<pre>${consoleOutput}</pre>`);
+  const htmlResponse = `
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+      }
+      pre {
+      
+        padding: 10px;
+        border-radius: 5px;
+        overflow: auto;
+        border: 1px solid black;
+      }
+      h1{
+
+      }
+    </style>
+
+    <h1>Recent Logs:</h1>
+    <pre>${consoleOutput}</pre>
+  `;
+  res.send(htmlResponse);
 });
 
 const PORT = process.env.PORT || 5000;
