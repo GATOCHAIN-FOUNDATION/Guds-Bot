@@ -141,6 +141,7 @@ app.get("/", async (req, res) => {
         align-items:center;
         justify-content:center;
         flex-direction:column;
+        color:#fff;
       }
       pre {
       
@@ -151,6 +152,7 @@ app.get("/", async (req, res) => {
         height:500px;
         width:500px;
         background-color: rgba(255, 255, 255, 0.5);
+        color:#fff;
       }
       h1{
 
