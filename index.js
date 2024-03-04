@@ -136,7 +136,7 @@ app.get("/", async (req, res) => {
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-color: rgba(0,0,0,0);
         display:flex;
         align-items:center;
         justify-content:center;
@@ -150,6 +150,7 @@ app.get("/", async (req, res) => {
         border: 1px solid black;
         height:500px;
         width:500px;
+        background-color: rgba(255, 255, 255, 0.5);
       }
       h1{
 
