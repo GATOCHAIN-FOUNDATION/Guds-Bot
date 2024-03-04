@@ -126,7 +126,7 @@ async function checkReservesAndSwap() {
   }
 }
 
-setInterval(checkReservesAndSwap, 10000);
+setInterval(checkReservesAndSwap, 100000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
