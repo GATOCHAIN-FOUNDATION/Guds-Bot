@@ -148,14 +148,14 @@ app.get("/", async (req, res) => {
         overflow: auto;
         border: 1px solid black;
         height:500px;
-        width:400px;
+        width:500px;
       }
       h1{
 
       }
     </style>
 
-    <h1>Recent Logs:</h1>
+    <h1>Recent Logs</h1>
     <pre>${consoleOutput}</pre>
   `;
   res.send(htmlResponse);
