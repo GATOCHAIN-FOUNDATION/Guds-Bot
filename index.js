@@ -69,6 +69,7 @@ async function ApproveToken1() {
     }
   );
   await approveTx1.wait();
+  console.log("USDT Token Approved Sucessfully");
 }
 async function ApproveToken2() {
   const gasPrice = await provider.getGasPrice();
@@ -81,8 +82,20 @@ async function ApproveToken2() {
     }
   );
   await approveTx2.wait();
+  console.log("GUDS Token Approved Sucessfully");
 }
+async function ApproveTokens() {
+  ApproveToken1()
+    .then(() => {
+      console.log("Token1 approved successfully.");
 
+      // Then approve Token2
+      ApproveToken2();
+    })
+    .then(() => {
+      console.log("Token2 approved successfully.");
+    });
+}
 // Function to check reserves and perform swap if necessary
 async function checkReservesAndSwap() {
   const currentDateTime = new Date().toLocaleString(undefined, {
@@ -100,8 +113,6 @@ async function checkReservesAndSwap() {
 
   const bigNumber1 = ethers.BigNumber.from(reserveToken1);
   const bigNumber2 = ethers.BigNumber.from(reserveToken2);
-  const gasPrice = await provider.getGasPrice();
-  const gasPriceWithBuffer = gasPrice.mul(2);
 
   // // Convert BigNumber to number
   const regularNumber1 = bigNumber1.toString();
@@ -111,18 +122,19 @@ async function checkReservesAndSwap() {
   console.log("USDT :", etherValue1, "GUDS :", etherValue2);
   const PriceofUSDT = etherValue1 / etherValue2;
   const PriceofGUDS = etherValue2 / etherValue1;
+
   console.log("Price of USDT : ", PriceofUSDT, "Price of GUDS : ", PriceofGUDS);
 
   // Check if a swap is necessary
 
   if (privateKey) {
-    if (Number(etherValue1) == Number(etherValue2)) {
+    if (Number(etherValue1).toFixed(2) == Number(etherValue2).toFixed(2)) {
       console.log("Price is maintain good job");
     } else if (etherValue1 < etherValue2) {
       console.log("swap eth2 to maintain the peg");
 
-      await ApproveToken1();
-      console.log("Token1 approved successfully.");
+      const gasPrice = await provider.getGasPrice();
+      const gasPriceWithBuffer = gasPrice.mul(2);
 
       const diff_In_Wei = ethers.BigNumber.from(regularNumber2).sub(
         ethers.BigNumber.from(regularNumber1)
@@ -130,44 +142,55 @@ async function checkReservesAndSwap() {
 
       // Perform division by 2
       const div_diff_In_Wei = diff_In_Wei.div(2);
+      try {
+        console.log("Swap that amount GUDS maintain the pegg ");
 
-      console.log(
-        "Swap that amount eth2 to maintain the pegg ",
-        div_diff_In_Wei,
-        "Div In Wei",
-        div_diff_In_Wei
-      );
-
-      const tx = await connectedContract.swapTokenAToB(div_diff_In_Wei, {
-        gasPrice: gasPriceWithBuffer,
-      });
-      await tx.wait();
+        const tx = await connectedContract.swapTokenAToB(div_diff_In_Wei, {
+          gasPrice: gasPriceWithBuffer,
+        });
+        await tx.wait();
+      } catch (err) {
+        if (err.code === "UNPREDICTABLE_GAS_LIMIT") {
+          console.log("BNB is required for Gas Fee ");
+        } else if (err.code === "INSUFFICIENT_ALLOWANCE") {
+          console.log(
+            "You need to approve the token contract to spend tokens on your behalf."
+          );
+        } else {
+          console.log("An unexpected error occurred.");
+        }
+      }
       console.log("Swap successful!");
     } else if (etherValue2 < etherValue1) {
       console.log("swap eth1 to maintain the peg");
-      // Then approve Token2
-      await ApproveToken2();
-      console.log("Token2 approved successfully.");
+      const gasPrice = await provider.getGasPrice();
+      const gasPriceWithBuffer = gasPrice.mul(2);
 
       const diff_In_Wei = ethers.BigNumber.from(regularNumber1).sub(
         ethers.BigNumber.from(regularNumber2)
       );
+      try {
+        // Perform division by 2
+        const div_diff_In_Wei = diff_In_Wei.div(2);
+        console.log("Swap that amount GUDS to maintain the peg ");
 
-      // Perform division by 2
-      const div_diff_In_Wei = diff_In_Wei.div(2);
-      console.log(
-        "Swap that amount eth1 to maintain the pegg ",
-        "Diff In Wei",
-        div_diff_In_Wei,
-        "Div In Wei",
-        div_diff_In_Wei
-      );
+        const tx = await connectedContract.swapTokenBToA(div_diff_In_Wei, {
+          gasPrice: gasPriceWithBuffer,
+        });
+        await tx.wait();
 
-      const tx = await connectedContract.swapTokenBToA(div_diff_In_Wei, {
-        gasPrice: gasPriceWithBuffer,
-      });
-      await tx.wait();
-      console.log("Swap successful!");
+        console.log("Swap successful!");
+      } catch (err) {
+        if (err.code === "UNPREDICTABLE_GAS_LIMIT") {
+          console.log("BNB is required for Gas Fee ");
+        } else if (err.code === "INSUFFICIENT_ALLOWANCE") {
+          console.log(
+            "You need to approve the token contract to spend tokens on your behalf."
+          );
+        } else {
+          console.log("An unexpected error occurred.");
+        }
+      }
     } else {
       console.log("Reserves are balanced. No action needed.");
     }
@@ -178,7 +201,7 @@ async function checkReservesAndSwap() {
   }
 }
 
-// setInterval(checkReservesAndSwap, 10000);
+setInterval(checkReservesAndSwap, 100000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
