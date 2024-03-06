@@ -10,6 +10,12 @@ const provider = new ethers.providers.JsonRpcProvider(
 const SwapContractAddress = require("./constant/constant").ContractAddress;
 const SwapContractAbi = require("./constant/constant").ContractABI;
 
+const GudsContractAddress = require("./constant/constant").GudsContractAddress;
+const GudsContractAbi = require("./constant/constant").GudsContractAbi;
+
+const UsdtContractAddress = require("./constant/constant").UsdtContractAddress;
+const UsdtContractAbi = require("./constant/constant").UsdtContractAbi;
+
 // console.log(SwapContractAbi, SwapContractAddress);
 
 // Redirect console output to a variable
@@ -32,12 +38,50 @@ const contract = new ethers.Contract(
   provider
 );
 
+const usdtcontract = new ethers.Contract(
+  UsdtContractAddress,
+  UsdtContractAbi,
+  provider
+);
+const gudscontract = new ethers.Contract(
+  GudsContractAddress,
+  GudsContractAbi,
+  provider
+);
+
 // Wallet private key
 const privateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(privateKey, provider);
 
 // Connect the wallet to the
 const connectedContract = contract.connect(wallet);
+const connectedUsdtContract = usdtcontract.connect(wallet);
+const connectedGudsContract = gudscontract.connect(wallet);
+
+async function ApproveToken1() {
+  const gasPrice = await provider.getGasPrice();
+  const gasPriceWithBuffer = gasPrice.mul(2);
+  const approveTx1 = await connectedUsdtContract.approve(
+    SwapContractAddress,
+    ethers.constants.MaxUint256,
+    {
+      gasPrice: gasPriceWithBuffer,
+    }
+  );
+  await approveTx1.wait();
+}
+async function ApproveToken2() {
+  const gasPrice = await provider.getGasPrice();
+  const gasPriceWithBuffer = gasPrice.mul(2);
+  const approveTx2 = await connectedGudsContract.approve(
+    SwapContractAddress,
+    ethers.constants.MaxUint256,
+    {
+      gasPrice: gasPriceWithBuffer,
+    }
+  );
+  await approveTx2.wait();
+}
 
 // Function to check reserves and perform swap if necessary
 async function checkReservesAndSwap() {
@@ -56,6 +100,8 @@ async function checkReservesAndSwap() {
 
   const bigNumber1 = ethers.BigNumber.from(reserveToken1);
   const bigNumber2 = ethers.BigNumber.from(reserveToken2);
+  const gasPrice = await provider.getGasPrice();
+  const gasPriceWithBuffer = gasPrice.mul(2);
 
   // // Convert BigNumber to number
   const regularNumber1 = bigNumber1.toString();
@@ -63,8 +109,6 @@ async function checkReservesAndSwap() {
   const etherValue1 = ethers.utils.formatUnits(regularNumber1, 18);
   const etherValue2 = ethers.utils.formatUnits(regularNumber2, 18);
   console.log("USDT :", etherValue1, "GUDS :", etherValue2);
-  const gasPrice = await provider.getGasPrice();
-  const gasPriceWithBuffer = gasPrice.mul(2);
   const PriceofUSDT = etherValue1 / etherValue2;
   const PriceofGUDS = etherValue2 / etherValue1;
   console.log("Price of USDT : ", PriceofUSDT, "Price of GUDS : ", PriceofGUDS);
@@ -72,10 +116,13 @@ async function checkReservesAndSwap() {
   // Check if a swap is necessary
 
   if (privateKey) {
-    if (Number(etherValue1).toFixed(14) == Number(etherValue2).toFixed(14)) {
+    if (Number(etherValue1) == Number(etherValue2)) {
       console.log("Price is maintain good job");
     } else if (etherValue1 < etherValue2) {
       console.log("swap eth2 to maintain the peg");
+
+      await ApproveToken1();
+      console.log("Token1 approved successfully.");
 
       const diff_In_Wei = ethers.BigNumber.from(regularNumber2).sub(
         ethers.BigNumber.from(regularNumber1)
@@ -98,6 +145,9 @@ async function checkReservesAndSwap() {
       console.log("Swap successful!");
     } else if (etherValue2 < etherValue1) {
       console.log("swap eth1 to maintain the peg");
+      // Then approve Token2
+      await ApproveToken2();
+      console.log("Token2 approved successfully.");
 
       const diff_In_Wei = ethers.BigNumber.from(regularNumber1).sub(
         ethers.BigNumber.from(regularNumber2)
@@ -128,7 +178,7 @@ async function checkReservesAndSwap() {
   }
 }
 
-setInterval(checkReservesAndSwap, 10000);
+// setInterval(checkReservesAndSwap, 10000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
