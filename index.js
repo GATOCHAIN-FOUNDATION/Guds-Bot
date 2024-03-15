@@ -84,18 +84,18 @@ async function ApproveToken2() {
   await approveTx2.wait();
   console.log("GUDS Token Approved Sucessfully");
 }
-async function ApproveTokens() {
-  ApproveToken1()
-    .then(() => {
-      console.log("Token1 approved successfully.");
+// async function ApproveTokens() {
+//   ApproveToken1()
+//     .then(() => {
+//       console.log("Token1 approved successfully.");
 
-      // Then approve Token2
-      ApproveToken2();
-    })
-    .then(() => {
-      console.log("Token2 approved successfully.");
-    });
-}
+//       // Then approve Token2
+//       ApproveToken2();
+//     })
+//     .then(() => {
+//       console.log("Token2 approved successfully.");
+//     });
+// }
 // Function to check reserves and perform swap if necessary
 async function checkReservesAndSwap() {
   const currentDateTime = new Date().toLocaleString(undefined, {
@@ -128,7 +128,7 @@ async function checkReservesAndSwap() {
   // Check if a swap is necessary
 
   if (privateKey) {
-    if (Number(etherValue1).toFixed(2) == Number(etherValue2).toFixed(2)) {
+    if (Number(etherValue1).toFixed(10) == Number(etherValue2).toFixed(10)) {
       console.log("Price is maintain good job");
     } else if (etherValue1 < etherValue2) {
       // console.log("swap eth2 to maintain the peg");
@@ -200,7 +200,7 @@ async function checkReservesAndSwap() {
   }
 }
 
-// setInterval(checkReservesAndSwap, 100000);
+setInterval(checkReservesAndSwap, 10000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
