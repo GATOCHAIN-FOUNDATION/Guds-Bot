@@ -131,7 +131,7 @@ async function checkReservesAndSwap() {
     if (Number(etherValue1).toFixed(2) == Number(etherValue2).toFixed(2)) {
       console.log("Price is maintain good job");
     } else if (etherValue1 < etherValue2) {
-      console.log("swap eth2 to maintain the peg");
+      // console.log("swap eth2 to maintain the peg");
 
       const gasPrice = await provider.getGasPrice();
       const gasPriceWithBuffer = gasPrice.mul(2);
@@ -143,7 +143,7 @@ async function checkReservesAndSwap() {
       // Perform division by 2
       const div_diff_In_Wei = diff_In_Wei.div(2);
       try {
-        console.log("Swap that amount GUDS maintain the pegg ");
+        console.log("Swap amount GUDS maintain the pegg ");
 
         const tx = await connectedContract.swapTokenAToB(div_diff_In_Wei, {
           gasPrice: gasPriceWithBuffer,
@@ -162,7 +162,6 @@ async function checkReservesAndSwap() {
       }
       console.log("Swap successful!");
     } else if (etherValue2 < etherValue1) {
-      console.log("swap eth1 to maintain the peg");
       const gasPrice = await provider.getGasPrice();
       const gasPriceWithBuffer = gasPrice.mul(2);
 
@@ -172,7 +171,7 @@ async function checkReservesAndSwap() {
       try {
         // Perform division by 2
         const div_diff_In_Wei = diff_In_Wei.div(2);
-        console.log("Swap that amount GUDS to maintain the peg ");
+        console.log("Swap amount GUDS to maintain the peg ");
 
         const tx = await connectedContract.swapTokenBToA(div_diff_In_Wei, {
           gasPrice: gasPriceWithBuffer,
@@ -201,7 +200,7 @@ async function checkReservesAndSwap() {
   }
 }
 
-setInterval(checkReservesAndSwap, 100000);
+// setInterval(checkReservesAndSwap, 100000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
