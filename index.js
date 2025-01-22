@@ -128,7 +128,7 @@ async function checkReservesAndSwap() {
   // Check if a swap is necessary
 
   if (privateKey) {
-    if (Number(etherValue1).toFixed(10) == Number(etherValue2).toFixed(10)) {
+    if (Number(etherValue1).toFixed(2) == Number(etherValue2).toFixed(2)) {
       console.log("Price is maintain good job");
     } else if (etherValue1 < etherValue2) {
       // console.log("swap eth2 to maintain the peg");
