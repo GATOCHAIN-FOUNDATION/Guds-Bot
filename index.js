@@ -128,7 +128,7 @@ async function checkReservesAndSwap() {
   // Check if a swap is necessary
 
   if (privateKey) {
-    if (Number(etherValue1).toFixed(2) == Number(etherValue2).toFixed(2)) {
+    if (Number(etherValue1).toFixed(1) == Number(etherValue2).toFixed(1)) {
       console.log("Price is maintain good job");
     } else if (etherValue1 < etherValue2) {
       // console.log("swap eth2 to maintain the peg");
@@ -200,7 +200,7 @@ async function checkReservesAndSwap() {
   }
 }
 
-setInterval(checkReservesAndSwap, 10000);
+setInterval(checkReservesAndSwap, 100000);
 
 // Route to trigger reserve check
 app.get("/", async (req, res) => {
